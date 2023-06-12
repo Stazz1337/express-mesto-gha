@@ -13,26 +13,21 @@ module.exports.createCard = (req, res) => {
     .catch((err) => {
       if (err.name === "ValidationError") {
         return res.status(400).send({
-          message: `${Object.values(err.errors)
-            .map((err) => err.message)
-            .join(", ")}`,
+          message: "Переданы некорректные данные при создании карточки",
         });
       }
-      return res.status(500).send({ message: "Server Error" });
+      return res.status(500).send({ message: "Произошла ошибка" });
     });
 };
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => {
-      if (!cards) {
-        return res.status(400).send("Invalid request"); 
-      }
 
       res.status(200).send(cards);
     })
-    .catch((err) => {
-      res.status(500).send(err.message);
+    .catch(() => {
+      res.status(500).send({ message: "Произошла ошибка" });
     });
 };
 
@@ -44,7 +39,7 @@ module.exports.deleteCard = (req, res) => {
 
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: "Карточка не найдена" });
+        return res.status(404).send({ message: "Карточка с указанным _id не найдена" });
       }
       return res.status(200).send(card);
     })
@@ -53,7 +48,7 @@ module.exports.deleteCard = (req, res) => {
 
 module.exports.likeCard = (req, res) => {
   if (!req.params.cardId || !req.user._id) {
-    return res.status(400).send('Invalid request');
+    return res.status(400).send({ message: " Переданы некорректные данные для постановки лайка" });
   }
 
   Card.findByIdAndUpdate(
@@ -63,19 +58,19 @@ module.exports.likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send('Card not found');
+        return res.status(404).send({ message: "Передан несуществующий _id карточки" });
       }
 
       res.send(card);
     })
-    .catch((err) => {
-      res.status(500).send(err.message);
+    .catch(() => {
+      res.status(500).send({ message: "Произошла ошибка" });
     });
 };
 
 module.exports.dislikeCard = (req, res) => {
   if (!req.params.cardId || !req.user._id) {
-    return res.status(400).send('Invalid request');
+    return res.status(400).send({ message: " Переданы некорректные данные для снятия лайка" });
   }
 
   Card.findByIdAndUpdate(
@@ -85,12 +80,12 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send('Card not found');
+        return res.status(404).send({ message: "Передан несуществующий _id карточки" });
       }
 
       res.send(card);
     })
-    .catch((err) => {
-      res.status(500).send(err.message);
+    .catch(() => {
+      res.status(500).send({ message: "Произошла ошибка" });
     });
 };
