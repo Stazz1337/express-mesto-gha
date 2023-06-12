@@ -17,14 +17,14 @@ module.exports.getUserById = (req, res) => {
     .then((user) => {
       if (!user) {
         return res
-          .status(400)
+          .status(404)
           .send({ message: "Пользователь по указанному _id не найден" });
       }
 
       res.status(200).send(user);
     })
     .catch(() => {
-      res.status(500).send({ message: "Произошла ошибка" });
+      res.status(400).send({ message: "Произошла ошибка" });
     });
 };
 
