@@ -1,4 +1,10 @@
-const Card = require("../models/card");
+const Card = require('../models/card');
+
+const OK = 200;
+const CREATED = 201;
+const BAD_REQUEST = 400;
+const NOT_FOUND = 404;
+const INTERNAL_SERVER_ERROR = 500;
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
@@ -7,85 +13,97 @@ module.exports.createCard = (req, res) => {
   return Card.create({ name, link, owner })
 
     .then((card) => {
-      res.status(201).send(card);
+      res.status(CREATED).send(card);
     })
 
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        return res.status(400).send({
-          message: "Переданы некорректные данные при создании карточки",
+      if (err.name === 'ValidationError') {
+        return res.status(BAD_REQUEST).send({
+          message: 'Переданы некорректные данные при создании карточки',
         });
       }
-      return res.status(500).send({ message: "Произошла ошибка" });
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };
 
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => {
-
-      res.status(200).send(cards);
+      res.status(OK).send(cards);
     })
     .catch(() => {
-      res.status(500).send({ message: "Произошла ошибка" });
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };
 
 module.exports.deleteCard = (req, res) => {
-  console.log(req.params);
-
   const { cardId } = req.params;
   Card.findByIdAndDelete(cardId)
 
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: "Карточка с указанным _id не найдена" });
+        return res
+          .status(NOT_FOUND)
+          .send({ message: 'Карточка с указанным _id не найдена' });
       }
       return res.status(200).send(card);
     })
-    .catch(() => res.status(400).send({ message: "Произошла ошибка" }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({
+          message: 'Переданы некорректные данные',
+        });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+    });
 };
 
 module.exports.likeCard = (req, res) => {
-  if (!req.params.cardId || !req.user._id) {
-    return res.status(400).send({ message: " Переданы некорректные данные для постановки лайка" });
-  }
-
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: "Передан несуществующий _id карточки" });
+        return res
+          .status(NOT_FOUND)
+          .send({ message: 'Передан несуществующий _id карточки' });
       }
 
-      res.send(card);
+      return res.send(card);
     })
-    .catch(() => {
-      res.status(400).send({ message: "Произошла ошибка" });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({
+          message: 'Переданы некорректные данные для постановки лайка',
+        });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };
 
 module.exports.dislikeCard = (req, res) => {
-  if (!req.params.cardId || !req.user._id) {
-    return res.status(400).send({ message: " Переданы некорректные данные для снятия лайка" });
-  }
-
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: "Передан несуществующий _id карточки" });
+        return res
+          .status(NOT_FOUND)
+          .send({ message: 'Передан несуществующий _id карточки' });
       }
 
-      res.send(card);
+      return res.send(card);
     })
-    .catch(() => {
-      res.status(400).send({ message: "Произошла ошибка" });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(BAD_REQUEST).send({
+          message: 'Переданы некорректные данные для снятия лайка',
+        });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
     });
 };
