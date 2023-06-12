@@ -27,8 +27,8 @@ app.use(bodyParser.json());
 
 app.use(router);
 
-app.get('*', function(req, res){
-  res.send('404', 404);
+app.patch('*', function(req, res){
+  res.send({message: "Page not found"});
 });
 
 app.listen(PORT, () => {
