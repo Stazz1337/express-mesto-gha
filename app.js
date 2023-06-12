@@ -21,17 +21,27 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  const error = new Error("Not Found");
+  error.status = 404;
+  next(error);
+});
+
+app.use((err, req, res) => {
+  if (err.status === 404) {
+    res.status(404).send({ message: "Страница не найдена" });
+  } else if (err.status === 400) {
+    res.status(400).send({ message: "Некорректный запрос" });
+  } else {
+    res.status(500).send({ message: "Произошла ошибка" });
+  }
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(bodyParser.json());
 
 app.use(router);
-
-app.use((err, req, res) => {
-  if (err.status === 404) {
-    res.status(404).send({ message: "Страница не найдена" });
-  }
-});
 
 app.listen(PORT, () => {
   console.log("Server started on port 3000");
