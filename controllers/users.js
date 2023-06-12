@@ -27,10 +27,10 @@ module.exports.getUserById = (req, res) => {
           .send({ message: 'Пользователь по указанному _id не найден' });
       }
 
-      return res.status(200).send(user);
+      return res.status(OK).send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         return res.status(BAD_REQUEST).send({
           message: 'Переданы некорректные данные',
         });
@@ -63,7 +63,7 @@ module.exports.createUser = (req, res) => {
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
 
-  return User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
+  return User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         return res
@@ -86,7 +86,7 @@ module.exports.updateUser = (req, res) => {
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
-  return User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
+  return User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         return res
