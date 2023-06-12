@@ -21,18 +21,15 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
-  const error = new Error("Not Found");
-  error.status = 404;
-  next(error);
-});
-
-
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(bodyParser.json());
 
 app.use(router);
+
+app.get('*', function(req, res){
+  res.send('404', 404);
+});
 
 app.listen(PORT, () => {
   console.log("Server started on port 3000");
