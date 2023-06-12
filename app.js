@@ -27,15 +27,6 @@ app.use((req, res, next) => {
   next(error);
 });
 
-app.use((err, req, res) => {
-  if (err.status === 404) {
-    res.status(404).send({ message: "Страница не найдена" });
-  } else if (err.status === 400) {
-    res.status(400).send({ message: "Некорректный запрос" });
-  } else {
-    res.status(500).send({ message: "Произошла ошибка" });
-  }
-});
 
 app.use(express.static(path.join(__dirname, "public")));
 
