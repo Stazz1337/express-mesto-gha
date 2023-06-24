@@ -1,6 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
+const auth = require('./middlewares/auth');
 const router = require('./routes');
+const { login, createUser } = require('./controllers/users');
 
 const app = express();
 const NOT_FOUND = 404;
@@ -13,20 +16,30 @@ mongoose
   })
   .then(() => console.log('MongoDB connected'));
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '648582273b35f8daa0eca946', // вставьте сюда _id созданного в предыдущем пункте пользователя
-  };
-
-  next();
-});
-
 app.use(express.json());
 
 app.use(router);
 
+app.post('/signin', login);
+app.post('/signup', createUser);
+
 app.patch('*', (req, res) => {
   res.status(NOT_FOUND).send({ message: 'Page not found' });
+});
+
+app.use(auth);
+
+app.use(errors()); // обработчик ошибок celebrate
+
+app.use((err, req, res, next) => {
+  // если у ошибки нет статуса, выставляем 500
+  const { statusCode = 500, message } = err;
+
+  res.status(statusCode).send({
+    // проверяем статус и выставляем сообщение в зависимости от него
+    message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
+  });
+  next();
 });
 
 app.listen(PORT, () => {
