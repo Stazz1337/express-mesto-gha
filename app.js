@@ -25,7 +25,7 @@ app.post(
   '/signin',
   celebrate({
     body: Joi.object().keys({
-      email: Joi.string().required().pattern(/^\S+@\S+\.\S+$/),
+      email: Joi.string().required().email(),
       password: Joi.string().required().min(8),
     }),
   }),
@@ -41,7 +41,7 @@ app.post(
       avatar: Joi.string().pattern(
         /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/, // eslint-disable-line
       ),
-      email: Joi.string().required().pattern(/^\S+@\S+\.\S+$/),
+      email: Joi.string().required().email(),
       password: Joi.string().required().min(8),
     }),
   }),
