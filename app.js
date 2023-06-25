@@ -19,7 +19,7 @@ mongoose
 
 app.use(express.json());
 
-app.use(router);
+
 
 app.post(
   '/signin',
@@ -53,6 +53,8 @@ app.patch('*', (req, res) => {
 });
 
 app.use(auth);
+
+app.use(router);
 
 app.use(errors()); // обработчик ошибок celebrate
 
