@@ -1,5 +1,6 @@
-const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi, Segments } = require('celebrate');
 const router = require('express').Router();
+const auth = require('../middlewares/auth');
 
 const {
   getUsers,
@@ -9,20 +10,20 @@ const {
   getCurrentUser,
 } = require('../controllers/users');
 
-router.get('/users', getUsers);
+router.get('/users', auth, getUsers);
+
+router.get('/users/me', getCurrentUser);
 
 router.get(
   '/users/:id',
   celebrate({
     // валидируем параметры
-    params: Joi.object().keys({
+    [Segments.PARAMS]: Joi.object().keys({
       id: Joi.string().length(24),
     }),
   }),
   getUserById,
 );
-
-router.get('/users/me', getCurrentUser);
 
 router.patch(
   '/users/me',
