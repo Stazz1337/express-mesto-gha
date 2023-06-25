@@ -89,7 +89,7 @@ module.exports.updateUser = (req, res, next) => {
         throw new NotFoundError('Пользователь по указанному _id не найден');
       }
 
-      return res.send(user);
+      return res.status(OK).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {

@@ -48,13 +48,15 @@ app.post(
   createUser,
 );
 
-app.patch('*', (req, res) => {
-  res.status(NOT_FOUND).send({ message: 'Page not found' });
-});
+
 
 app.use(auth);
 
 app.use(router);
+
+app.patch('*', (req, res) => {
+  res.status(NOT_FOUND).send({ message: 'Page not found' });
+});
 
 app.use(errors()); // обработчик ошибок celebrate
 
