@@ -97,6 +97,7 @@ module.exports.updateUser = (req, res, next) => {
           'Переданы некорректные данные при обновлении профиля',
         );
       }
+      throw err;
     })
     .catch(next);
 };
@@ -122,6 +123,7 @@ module.exports.updateAvatar = (req, res, next) => {
           'Переданы некорректные данные при обновлении аватара',
         );
       }
+      throw err;
     })
     .catch(next);
 };
