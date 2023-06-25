@@ -52,6 +52,7 @@ module.exports.deleteCard = (req, res, next) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Переданы некорректные данные');
       }
+      throw err;
     })
     .catch(next);
 };
