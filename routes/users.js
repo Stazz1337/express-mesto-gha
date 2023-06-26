@@ -1,5 +1,6 @@
 const { celebrate, Joi } = require('celebrate');
 const router = require('express').Router();
+const REGEXP_LINK = require('../middlewares/validations');
 
 const {
   getUsers,
@@ -18,7 +19,7 @@ router.get(
   celebrate({
     // валидируем параметры
     params: Joi.object().keys({
-      id: Joi.string().length(24),
+      id: Joi.string().length(24).hex().required(),
     }),
   }),
   getUserById,
@@ -39,9 +40,7 @@ router.patch(
   '/users/me/avatar',
   celebrate({
     body: Joi.object().keys({
-      avatar: Joi.string().pattern(
-        /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/, // eslint-disable-line
-      ),
+      avatar: Joi.string().pattern(REGEXP_LINK),
     }),
   }),
   updateAvatar,
