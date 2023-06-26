@@ -7,7 +7,6 @@ const CREATED = 201;
 
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
-const UnauthorizedError = require('../errors/UnauthorizedError');
 const ConflictError = require('../errors/ConflictError');
 
 module.exports.getUsers = (req, res, next) => {
@@ -30,9 +29,10 @@ module.exports.getUserById = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные');
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
       }
-      throw err;
     })
     .catch(next);
 };
@@ -62,15 +62,21 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError(
-          'Переданы некорректные данные при создании пользователя',
+        next(
+          new BadRequestError(
+            'Переданы некорректные данные при создании пользователя',
+          ),
         );
       }
 
       if (err.code === 11000) {
-        throw new ConflictError(
-          'При регистрации указан email, который уже существует на сервере',
+        next(
+          new ConflictError(
+            'При регистрации указан email, который уже существует на сервере',
+          ),
         );
+      } else {
+        next(err);
       }
     })
     .catch(next);
@@ -93,11 +99,14 @@ module.exports.updateUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError(
-          'Переданы некорректные данные при обновлении профиля',
+        next(
+          new BadRequestError(
+            'Переданы некорректные данные при обновлении профиля',
+          ),
         );
+      } else {
+        next(err);
       }
-      throw err;
     })
     .catch(next);
 };
@@ -119,11 +128,14 @@ module.exports.updateAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError(
-          'Переданы некорректные данные при обновлении аватара',
+        next(
+          new BadRequestError(
+            'Переданы некорректные данные при обновлении аватара',
+          ),
         );
+      } else {
+        next(err);
       }
-      throw err;
     })
     .catch(next);
 };
@@ -138,9 +150,6 @@ module.exports.login = (req, res, next) => {
       });
       // вернём токен
       res.send({ token });
-    })
-    .catch(() => {
-      throw new UnauthorizedError('Передан неверный логин или пароль');
     })
     .catch(next);
 };
