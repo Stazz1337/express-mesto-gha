@@ -33,8 +33,7 @@ module.exports.getUserById = (req, res, next) => {
       } else {
         next(err);
       }
-    })
-    .catch(next);
+    });
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -67,9 +66,7 @@ module.exports.createUser = (req, res, next) => {
             'Переданы некорректные данные при создании пользователя',
           ),
         );
-      }
-
-      if (err.code === 11000) {
+      } else if (err.code === 11000) {
         next(
           new ConflictError(
             'При регистрации указан email, который уже существует на сервере',
@@ -78,8 +75,7 @@ module.exports.createUser = (req, res, next) => {
       } else {
         next(err);
       }
-    })
-    .catch(next);
+    });
 };
 
 module.exports.updateUser = (req, res, next) => {
@@ -107,8 +103,7 @@ module.exports.updateUser = (req, res, next) => {
       } else {
         next(err);
       }
-    })
-    .catch(next);
+    });
 };
 
 module.exports.updateAvatar = (req, res, next) => {
@@ -136,8 +131,7 @@ module.exports.updateAvatar = (req, res, next) => {
       } else {
         next(err);
       }
-    })
-    .catch(next);
+    });
 };
 
 module.exports.login = (req, res, next) => {
